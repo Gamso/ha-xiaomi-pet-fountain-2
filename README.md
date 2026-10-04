@@ -199,12 +199,10 @@ Steps:
 3. Add this integration, then update automations, scripts and dashboards with
    the new entity IDs. You can also rename the new entities to the old IDs
    (entity settings) once the Miot Auto ones are removed.
-4. The Lovelace card *xiaomi_smart_pet_fountain_2_card* finds Miot Auto
-   entities by their suffix: point it at the new entities with its overrides
-   (`power_entity`, `mode_entity`, `filter_life_entity`, `filter_left_time_entity`,
-   `battery_entity`, `charging_state_entity`, `water_shortage_entity`,
-   `physical_control_lock_entity`, `no_disturb_entity`, `water_interval_entity`,
-   `reset_filter_entity`).
+4. The Lovelace card
+   [xiaomi_smart_pet_fountain_2_card](https://github.com/Gamso/xiaomi_smart_pet_fountain_2_card)
+   detects this integration by itself: point it at any entity of the fountain,
+   for example `entity: switch.xiaomi_smart_pet_fountain_2_power`.
 
 ## Not checked on a real device
 
