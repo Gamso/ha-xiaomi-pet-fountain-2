@@ -9,6 +9,7 @@ from homeassistant.const import CONF_HOST, CONF_TOKEN
 from homeassistant.core import HomeAssistant
 
 from .api import FountainClient
+from .coordinator import FountainCoordinator
 
 
 @dataclass
@@ -16,6 +17,7 @@ class FountainRuntimeData:
     """Objects of a loaded entry."""
 
     client: FountainClient
+    coordinator: FountainCoordinator
 
 
 type FountainConfigEntry = ConfigEntry[FountainRuntimeData]
@@ -24,7 +26,9 @@ type FountainConfigEntry = ConfigEntry[FountainRuntimeData]
 async def async_setup_entry(hass: HomeAssistant, entry: FountainConfigEntry) -> bool:
     """Set up a fountain."""
     client = FountainClient(hass, entry.data[CONF_HOST], entry.data[CONF_TOKEN])
-    entry.runtime_data = FountainRuntimeData(client=client)
+    coordinator = FountainCoordinator(hass, entry, client)
+    await coordinator.async_config_entry_first_refresh()
+    entry.runtime_data = FountainRuntimeData(client=client, coordinator=coordinator)
     return True
 
 

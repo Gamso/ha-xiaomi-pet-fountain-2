@@ -48,5 +48,13 @@
         }
       }
     }
+  },
+  "exceptions": {
+    "write_failed": {
+      "message": "L'écriture de {property} sur la fontaine a échoué : {error}"
+    },
+    "action_failed": {
+      "message": "La fontaine a refusé l'action {action} : {error}"
+    }
   }
 }

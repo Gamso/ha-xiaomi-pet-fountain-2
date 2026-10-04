@@ -48,5 +48,13 @@
         }
       }
     }
+  },
+  "exceptions": {
+    "write_failed": {
+      "message": "Writing {property} to the fountain failed: {error}"
+    },
+    "action_failed": {
+      "message": "The fountain refused action {action}: {error}"
+    }
   }
 }
