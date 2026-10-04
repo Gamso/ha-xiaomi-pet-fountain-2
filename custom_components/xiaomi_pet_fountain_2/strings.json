@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Xiaomi Smart Pet Fountain 2",
+        "description": "Local connection to the fountain (xiaomi.pet_waterer.iv02). The token is the 32-character hexadecimal key of the device; see the README to get it.",
+        "data": {
+          "host": "IP address",
+          "token": "Token"
+        },
+        "data_description": {
+          "host": "Give the fountain a fixed IP address (DHCP reservation) on your router.",
+          "token": "32 hexadecimal characters."
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure the fountain",
+        "description": "Change the IP address or the token of this fountain.",
+        "data": {
+          "host": "IP address",
+          "token": "Token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "No answer from this address. Check the IP address and that the fountain is on the same network.",
+      "invalid_token": "The fountain answers but rejects the token.",
+      "invalid_token_format": "The token must be 32 hexadecimal characters.",
+      "unsupported_model": "This device is not a Xiaomi Smart Pet Fountain 2 (xiaomi.pet_waterer.iv02).",
+      "cannot_identify": "The device returned neither a MAC address nor a device ID.",
+      "unknown": "Unexpected error, see the logs."
+    },
+    "abort": {
+      "already_configured": "This fountain is already configured.",
+      "reconfigure_successful": "The fountain was reconfigured.",
+      "wrong_device": "This address and token belong to another device."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Polling interval"
+        },
+        "data_description": {
+          "scan_interval": "Seconds between two reads of the fountain."
+        }
+      }
+    }
+  }
+}

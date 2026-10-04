@@ -1,0 +1,52 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Xiaomi Smart Pet Fountain 2",
+        "description": "Connexion locale à la fontaine (xiaomi.pet_waterer.iv02). Le token est la clé hexadécimale de 32 caractères de l'appareil ; voir le README pour l'obtenir.",
+        "data": {
+          "host": "Adresse IP",
+          "token": "Token"
+        },
+        "data_description": {
+          "host": "Donnez à la fontaine une adresse IP fixe (réservation DHCP) sur votre box.",
+          "token": "32 caractères hexadécimaux."
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer la fontaine",
+        "description": "Changer l'adresse IP ou le token de cette fontaine.",
+        "data": {
+          "host": "Adresse IP",
+          "token": "Token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Aucune réponse à cette adresse. Vérifiez l'adresse IP et que la fontaine est sur le même réseau.",
+      "invalid_token": "La fontaine répond mais refuse le token.",
+      "invalid_token_format": "Le token doit compter 32 caractères hexadécimaux.",
+      "unsupported_model": "Cet appareil n'est pas une Xiaomi Smart Pet Fountain 2 (xiaomi.pet_waterer.iv02).",
+      "cannot_identify": "L'appareil n'a renvoyé ni adresse MAC ni identifiant.",
+      "unknown": "Erreur inattendue, voir le journal."
+    },
+    "abort": {
+      "already_configured": "Cette fontaine est déjà configurée.",
+      "reconfigure_successful": "La fontaine a été reconfigurée.",
+      "wrong_device": "Cette adresse et ce token correspondent à un autre appareil."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Intervalle d'interrogation"
+        },
+        "data_description": {
+          "scan_interval": "Secondes entre deux lectures de la fontaine."
+        }
+      }
+    }
+  }
+}

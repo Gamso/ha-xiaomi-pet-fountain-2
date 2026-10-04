@@ -1,0 +1,8 @@
+# Test requirements. pytest-homeassistant-custom-component pins Home Assistant
+# (0.13.367 = homeassistant 2026.9.4) and brings pytest, pytest-asyncio and
+# the hass fixture.
+pytest-homeassistant-custom-component==0.13.367
+# Runtime requirement of the integration (same pin as Home Assistant's own
+# xiaomi_miio integration).
+python-miio==0.5.12
+ruff==0.16.10

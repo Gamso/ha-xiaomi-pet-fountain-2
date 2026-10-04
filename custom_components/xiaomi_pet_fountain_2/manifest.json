@@ -1,0 +1,13 @@
+{
+  "domain": "xiaomi_pet_fountain_2",
+  "name": "Xiaomi Smart Pet Fountain 2",
+  "codeowners": ["@Gamso"],
+  "config_flow": true,
+  "documentation": "https://github.com/Gamso/ha-xiaomi-pet-fountain-2",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Gamso/ha-xiaomi-pet-fountain-2/issues",
+  "loggers": ["miio"],
+  "requirements": ["python-miio>=0.5.12"],
+  "version": "0.1.0"
+}
