@@ -62,6 +62,15 @@
     },
     "action_failed": {
       "message": "The fountain refused action {action}: {error}"
+    },
+    "entry_not_found": {
+      "message": "No Xiaomi Smart Pet Fountain 2 entry with ID {entry_id}."
+    },
+    "entry_not_loaded": {
+      "message": "The fountain {title} is not loaded."
+    },
+    "no_preferred_mode": {
+      "message": "No preferred mode is known yet: choose a mode first."
     }
   },
   "entity": {
@@ -168,6 +177,32 @@
         "auto": "Auto",
         "interval": "Interval",
         "constant": "Constant"
+      }
+    }
+  },
+  "services": {
+    "restore_mode": {
+      "name": "Restore mode",
+      "description": "Writes the preferred mode to the fountain now, whatever the Keep mode switch.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Fountain",
+          "description": "The fountain to act on."
+        }
+      }
+    },
+    "set_preferred_mode": {
+      "name": "Set preferred mode",
+      "description": "Changes the mode restored after power cuts, and restores it if Keep mode is on and the fountain is in another mode.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Fountain",
+          "description": "The fountain to act on."
+        },
+        "mode": {
+          "name": "Mode",
+          "description": "The new preferred mode."
+        }
       }
     }
   }

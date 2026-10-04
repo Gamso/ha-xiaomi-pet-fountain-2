@@ -111,5 +111,13 @@
         "default": "mdi:weather-sunny"
       }
     }
+  },
+  "services": {
+    "restore_mode": {
+      "service": "mdi:backup-restore"
+    },
+    "set_preferred_mode": {
+      "service": "mdi:water-sync"
+    }
   }
 }

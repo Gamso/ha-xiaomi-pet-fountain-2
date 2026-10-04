@@ -1,0 +1,25 @@
+restore_mode:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: xiaomi_pet_fountain_2
+
+set_preferred_mode:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: xiaomi_pet_fountain_2
+    mode:
+      required: true
+      example: constant
+      selector:
+        select:
+          options:
+            - auto
+            - interval
+            - constant
+          translation_key: preferred_mode

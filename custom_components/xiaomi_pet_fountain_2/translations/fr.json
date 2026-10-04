@@ -62,6 +62,15 @@
     },
     "action_failed": {
       "message": "La fontaine a refusé l'action {action} : {error}"
+    },
+    "entry_not_found": {
+      "message": "Aucune entrée Xiaomi Smart Pet Fountain 2 d'identifiant {entry_id}."
+    },
+    "entry_not_loaded": {
+      "message": "La fontaine {title} n'est pas chargée."
+    },
+    "no_preferred_mode": {
+      "message": "Aucun mode préféré connu : choisissez d'abord un mode."
     }
   },
   "entity": {
@@ -168,6 +177,32 @@
         "auto": "Auto (détection)",
         "interval": "Intermittent",
         "constant": "Continu"
+      }
+    }
+  },
+  "services": {
+    "restore_mode": {
+      "name": "Restaurer le mode",
+      "description": "Écrit maintenant le mode préféré sur la fontaine, quel que soit l'interrupteur Conserver le mode.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Fontaine",
+          "description": "La fontaine concernée."
+        }
+      }
+    },
+    "set_preferred_mode": {
+      "name": "Définir le mode préféré",
+      "description": "Change le mode restauré après les coupures de courant, et le restaure si Conserver le mode est activé et que la fontaine est dans un autre mode.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Fontaine",
+          "description": "La fontaine concernée."
+        },
+        "mode": {
+          "name": "Mode",
+          "description": "Le nouveau mode préféré."
+        }
       }
     }
   }
