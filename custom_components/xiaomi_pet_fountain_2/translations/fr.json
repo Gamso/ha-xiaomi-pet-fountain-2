@@ -56,5 +56,89 @@
     "action_failed": {
       "message": "La fontaine a refusé l'action {action} : {error}"
     }
+  },
+  "entity": {
+    "binary_sensor": {
+      "water_shortage": {
+        "name": "Manque d'eau"
+      },
+      "pump_blocked": {
+        "name": "Pompe bloquée"
+      },
+      "fault": {
+        "name": "Défaut"
+      },
+      "low_battery": {
+        "name": "Batterie faible"
+      },
+      "usb_power": {
+        "name": "Alimentation secteur"
+      }
+    },
+    "button": {
+      "reset_filter": {
+        "name": "Réinitialiser le filtre"
+      }
+    },
+    "number": {
+      "out_water_interval": {
+        "name": "Intervalle d'écoulement"
+      },
+      "out_water_interval_2": {
+        "name": "Intervalle d'écoulement (pas de 5 min)"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Mode",
+        "state": {
+          "auto": "Auto (détection)",
+          "interval": "Intermittent",
+          "constant": "Continu"
+        }
+      }
+    },
+    "sensor": {
+      "pump_status": {
+        "name": "État de la pompe",
+        "state": {
+          "waterless": "À l'arrêt",
+          "watering": "Écoulement"
+        }
+      },
+      "filter_life": {
+        "name": "Durée de vie du filtre"
+      },
+      "filter_left_time": {
+        "name": "Jours restants du filtre"
+      },
+      "charging_state": {
+        "name": "État de charge",
+        "state": {
+          "no_charge": "Pas de charge (sur batterie)",
+          "charging": "En charge",
+          "charge_full": "Chargée"
+        }
+      }
+    },
+    "switch": {
+      "power": {
+        "name": "Marche"
+      },
+      "child_lock": {
+        "name": "Verrouillage enfant"
+      },
+      "no_disturb": {
+        "name": "Ne pas déranger"
+      }
+    },
+    "time": {
+      "no_disturb_start": {
+        "name": "Début de ne pas déranger"
+      },
+      "no_disturb_end": {
+        "name": "Fin de ne pas déranger"
+      }
+    }
   }
 }

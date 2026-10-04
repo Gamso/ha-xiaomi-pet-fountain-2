@@ -1,0 +1,98 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "water_shortage": {
+        "default": "mdi:water-check",
+        "state": {
+          "on": "mdi:water-alert"
+        }
+      },
+      "pump_blocked": {
+        "default": "mdi:pump",
+        "state": {
+          "on": "mdi:pump-off"
+        }
+      },
+      "usb_power": {
+        "default": "mdi:power-plug-off",
+        "state": {
+          "on": "mdi:power-plug"
+        }
+      }
+    },
+    "button": {
+      "reset_filter": {
+        "default": "mdi:air-filter"
+      }
+    },
+    "number": {
+      "out_water_interval": {
+        "default": "mdi:timer-outline"
+      },
+      "out_water_interval_2": {
+        "default": "mdi:timer-outline"
+      }
+    },
+    "select": {
+      "mode": {
+        "default": "mdi:water-sync",
+        "state": {
+          "auto": "mdi:motion-sensor",
+          "interval": "mdi:timer-sync-outline",
+          "constant": "mdi:fountain"
+        }
+      }
+    },
+    "sensor": {
+      "pump_status": {
+        "default": "mdi:pump",
+        "state": {
+          "waterless": "mdi:pump-off",
+          "watering": "mdi:pump"
+        }
+      },
+      "filter_life": {
+        "default": "mdi:air-filter"
+      },
+      "filter_left_time": {
+        "default": "mdi:calendar-clock"
+      },
+      "charging_state": {
+        "default": "mdi:battery-unknown",
+        "state": {
+          "no_charge": "mdi:battery",
+          "charging": "mdi:battery-charging",
+          "charge_full": "mdi:power-plug"
+        }
+      }
+    },
+    "switch": {
+      "power": {
+        "default": "mdi:fountain",
+        "state": {
+          "off": "mdi:water-off"
+        }
+      },
+      "child_lock": {
+        "default": "mdi:lock-open-variant",
+        "state": {
+          "on": "mdi:lock"
+        }
+      },
+      "no_disturb": {
+        "default": "mdi:bell",
+        "state": {
+          "on": "mdi:sleep"
+        }
+      }
+    },
+    "time": {
+      "no_disturb_start": {
+        "default": "mdi:sleep"
+      },
+      "no_disturb_end": {
+        "default": "mdi:weather-sunny"
+      }
+    }
+  }
+}

@@ -56,5 +56,89 @@
     "action_failed": {
       "message": "The fountain refused action {action}: {error}"
     }
+  },
+  "entity": {
+    "binary_sensor": {
+      "water_shortage": {
+        "name": "Water shortage"
+      },
+      "pump_blocked": {
+        "name": "Pump blocked"
+      },
+      "fault": {
+        "name": "Fault"
+      },
+      "low_battery": {
+        "name": "Low battery"
+      },
+      "usb_power": {
+        "name": "Mains power"
+      }
+    },
+    "button": {
+      "reset_filter": {
+        "name": "Reset filter"
+      }
+    },
+    "number": {
+      "out_water_interval": {
+        "name": "Water interval"
+      },
+      "out_water_interval_2": {
+        "name": "Water interval (5 min steps)"
+      }
+    },
+    "select": {
+      "mode": {
+        "name": "Mode",
+        "state": {
+          "auto": "Auto",
+          "interval": "Interval",
+          "constant": "Constant"
+        }
+      }
+    },
+    "sensor": {
+      "pump_status": {
+        "name": "Pump status",
+        "state": {
+          "waterless": "Not flowing",
+          "watering": "Flowing"
+        }
+      },
+      "filter_life": {
+        "name": "Filter life"
+      },
+      "filter_left_time": {
+        "name": "Filter time left"
+      },
+      "charging_state": {
+        "name": "Charging state",
+        "state": {
+          "no_charge": "Not charging (on battery)",
+          "charging": "Charging",
+          "charge_full": "Fully charged"
+        }
+      }
+    },
+    "switch": {
+      "power": {
+        "name": "Power"
+      },
+      "child_lock": {
+        "name": "Child lock"
+      },
+      "no_disturb": {
+        "name": "Do not disturb"
+      }
+    },
+    "time": {
+      "no_disturb_start": {
+        "name": "Do not disturb start"
+      },
+      "no_disturb_end": {
+        "name": "Do not disturb end"
+      }
+    }
   }
 }

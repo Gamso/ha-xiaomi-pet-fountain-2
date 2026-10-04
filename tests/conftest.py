@@ -6,6 +6,7 @@ from collections.abc import Generator
 from typing import Any
 from unittest.mock import patch
 
+from homeassistant.core import HomeAssistant
 from miio import DeviceException
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -162,3 +163,19 @@ def config_entry() -> MockConfigEntry:
         unique_id=UNIQUE_ID,
         data={"host": HOST, "token": TOKEN},
     )
+
+
+async def setup_entry(hass: HomeAssistant, entry: MockConfigEntry) -> MockConfigEntry:
+    """Add and load an entry."""
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    return entry
+
+
+@pytest.fixture
+async def init_integration(
+    hass: HomeAssistant, fountain: FakeFountain, config_entry: MockConfigEntry
+) -> MockConfigEntry:
+    """The integration loaded with the simulated fountain."""
+    return await setup_entry(hass, config_entry)
