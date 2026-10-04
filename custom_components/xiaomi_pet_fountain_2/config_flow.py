@@ -8,6 +8,7 @@ from typing import Any
 
 from homeassistant.config_entries import (
     ConfigEntry,
+    ConfigEntryState,
     ConfigFlow,
     ConfigFlowResult,
     OptionsFlowWithReload,
@@ -20,14 +21,21 @@ import voluptuous as vol
 
 from .api import FountainAuthError, FountainClient, FountainConnectionError, FountainInfo
 from .const import (
+    CONF_FORCE_MODE,
+    CONF_PREFERRED_MODE,
+    CONF_RESTORE_DELAY,
     CONF_SCAN_INTERVAL,
     DEFAULT_NAME,
+    DEFAULT_RESTORE_DELAY,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    MAX_RESTORE_DELAY,
     MAX_SCAN_INTERVAL,
     MIN_SCAN_INTERVAL,
+    MODES,
     SUPPORTED_MODELS,
 )
+from .mode_keeper import async_read_preferred_mode, async_store_preferred_mode
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -131,27 +139,75 @@ class XiaomiPetFountainConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class FountainOptionsFlow(OptionsFlowWithReload):
-    """Polling interval (the entry reloads when the options change)."""
+    """Polling and mode keeping options (the entry reloads when they change).
+
+    The preferred mode is not an option: it lives in the mode keeper store,
+    because the mode select also changes it. The form only edits it.
+    """
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Show and save the options."""
+        entry = self.config_entry
+        loaded = entry.state is ConfigEntryState.LOADED
         if user_input is not None:
-            return self.async_create_entry(data=user_input)
-        options = self.config_entry.options
-        schema = vol.Schema(
-            {
-                vol.Required(
-                    CONF_SCAN_INTERVAL,
-                    default=options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
-                ): selector.NumberSelector(
-                    selector.NumberSelectorConfig(
-                        min=MIN_SCAN_INTERVAL,
-                        max=MAX_SCAN_INTERVAL,
-                        step=1,
-                        unit_of_measurement="s",
-                        mode=selector.NumberSelectorMode.BOX,
-                    )
-                ),
-            }
-        )
-        return self.async_show_form(step_id="init", data_schema=schema)
+            preferred = user_input.pop(CONF_PREFERRED_MODE, None)
+            if preferred is not None:
+                if loaded:
+                    keeper = entry.runtime_data.keeper
+                    if preferred != keeper.preferred_mode:
+                        await keeper.async_set_preferred_mode(preferred, apply=True)
+                else:
+                    await async_store_preferred_mode(self.hass, entry, preferred)
+            return self.async_create_entry(
+                data={
+                    CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL]),
+                    CONF_RESTORE_DELAY: int(user_input[CONF_RESTORE_DELAY]),
+                    CONF_FORCE_MODE: bool(user_input[CONF_FORCE_MODE]),
+                }
+            )
+
+        if loaded:
+            preferred = entry.runtime_data.keeper.preferred_mode
+        else:
+            preferred = await async_read_preferred_mode(self.hass, entry)
+        options = entry.options
+        fields: dict[Any, Any] = {
+            vol.Required(
+                CONF_SCAN_INTERVAL,
+                default=options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    min=MIN_SCAN_INTERVAL,
+                    max=MAX_SCAN_INTERVAL,
+                    step=1,
+                    unit_of_measurement="s",
+                    mode=selector.NumberSelectorMode.BOX,
+                )
+            ),
+            vol.Optional(
+                CONF_PREFERRED_MODE,
+                description={"suggested_value": preferred},
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=MODES,
+                    translation_key=CONF_PREFERRED_MODE,
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                )
+            ),
+            vol.Required(
+                CONF_RESTORE_DELAY,
+                default=options.get(CONF_RESTORE_DELAY, DEFAULT_RESTORE_DELAY),
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    min=0,
+                    max=MAX_RESTORE_DELAY,
+                    step=1,
+                    unit_of_measurement="s",
+                    mode=selector.NumberSelectorMode.BOX,
+                )
+            ),
+            vol.Required(
+                CONF_FORCE_MODE, default=options.get(CONF_FORCE_MODE, False)
+            ): selector.BooleanSelector(),
+        }
+        return self.async_show_form(step_id="init", data_schema=vol.Schema(fields))

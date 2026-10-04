@@ -16,6 +16,19 @@ DEFAULT_SCAN_INTERVAL: Final = 30  # seconds
 MIN_SCAN_INTERVAL: Final = 10
 MAX_SCAN_INTERVAL: Final = 600
 
+# Mode keeping (see mode_keeper.py)
+CONF_PREFERRED_MODE: Final = "preferred_mode"
+CONF_RESTORE_DELAY: Final = "restore_delay"
+DEFAULT_RESTORE_DELAY: Final = 10  # seconds
+MAX_RESTORE_DELAY: Final = 300
+CONF_FORCE_MODE: Final = "force_mode"
+RESTORE_MAX_ATTEMPTS: Final = 3
+RESTORE_MIN_BACKOFF: Final = 5  # seconds, base of the retry backoff
+RESTORE_MAX_BACKOFF: Final = 300
+# After a failed forced restoration, wait this long before forcing again.
+FORCE_COOLDOWN: Final = 600
+EVENT_MODE_RESTORE: Final = f"{DOMAIN}_mode_restore"
+
 # Network: one miIO request waits at most DEVICE_TIMEOUT seconds and is sent
 # at most DEVICE_RETRIES + 1 times; CALL_TIMEOUT bounds a whole call (several
 # chunked requests) from the event loop side.

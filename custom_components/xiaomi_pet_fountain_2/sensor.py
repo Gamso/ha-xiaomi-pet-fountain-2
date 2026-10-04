@@ -1,9 +1,10 @@
-"""Sensors: pump status, filter, battery, charging state."""
+"""Sensors: pump status, filter, battery, charging state, mode keeping."""
 
 from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -17,8 +18,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import FountainConfigEntry
-from .const import CHARGING_TO_STATE, STATUS_TO_STATE
-from .entity import FountainEntity
+from .const import CHARGING_TO_STATE, MODES, STATUS_TO_STATE
+from .entity import FountainEntity, FountainKeeperEntity
 
 PARALLEL_UPDATES = 0
 
@@ -72,6 +73,20 @@ SENSORS: tuple[FountainSensorDescription, ...] = (
     ),
 )
 
+PREFERRED_MODE = SensorEntityDescription(
+    key="preferred_mode",
+    translation_key="preferred_mode",
+    device_class=SensorDeviceClass.ENUM,
+    options=MODES,
+    entity_category=EntityCategory.DIAGNOSTIC,
+)
+LAST_RESTORE = SensorEntityDescription(
+    key="last_mode_restore",
+    translation_key="last_mode_restore",
+    device_class=SensorDeviceClass.TIMESTAMP,
+    entity_category=EntityCategory.DIAGNOSTIC,
+)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -85,6 +100,13 @@ async def async_setup_entry(
         for description in SENSORS
         if coordinator.is_supported(description.key)
     )
+    if coordinator.is_supported("mode"):
+        async_add_entities(
+            [
+                FountainPreferredModeSensor(coordinator, PREFERRED_MODE),
+                FountainLastRestoreSensor(coordinator, LAST_RESTORE),
+            ]
+        )
 
 
 class FountainSensor(FountainEntity, SensorEntity):
@@ -97,3 +119,37 @@ class FountainSensor(FountainEntity, SensorEntity):
         """Return the converted value."""
         value = self._value()
         return None if value is None else self.entity_description.value_fn(value)
+
+
+class FountainPreferredModeSensor(FountainKeeperEntity, SensorEntity):
+    """Mode the keeper restores."""
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the preferred mode."""
+        return self.keeper.preferred_mode
+
+
+class FountainLastRestoreSensor(FountainKeeperEntity, SensorEntity):
+    """Time and outcome of the last mode restoration."""
+
+    @property
+    def native_value(self) -> datetime | None:
+        """Return when the last restoration ended."""
+        record = self.keeper.last_restore
+        return record.time if record else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Reason, outcome, modes and attempts of the last restoration."""
+        record = self.keeper.last_restore
+        if record is None:
+            return {}
+        return {
+            "reason": record.reason,
+            "result": record.result,
+            "from_mode": record.from_mode,
+            "to_mode": record.to_mode,
+            "attempts": record.attempts,
+            "error": record.error,
+        }

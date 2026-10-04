@@ -27,7 +27,10 @@ async def async_setup_entry(
 
 
 class FountainModeSelect(FountainEntity, SelectEntity):
-    """Mode of the pump: sensor (auto), interval or constant."""
+    """Mode of the pump: sensor (auto), interval or constant.
+
+    A mode chosen here becomes the preferred mode of the mode keeper.
+    """
 
     @property
     def current_option(self) -> str | None:
@@ -35,5 +38,8 @@ class FountainModeSelect(FountainEntity, SelectEntity):
         return VALUE_TO_MODE.get(self._value())
 
     async def async_select_option(self, option: str) -> None:
-        """Change the mode."""
+        """Change the mode and remember it as the preferred one."""
+        keeper = self.coordinator.config_entry.runtime_data.keeper
+        keeper.async_cancel()
         await self.coordinator.async_write("mode", MODE_TO_VALUE[option])
+        await keeper.async_set_preferred_mode(option, apply=False)

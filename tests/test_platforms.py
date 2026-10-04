@@ -37,6 +37,9 @@ ENTITY_IDS = sorted(
         f"time.{P}_do_not_disturb_start",
         f"time.{P}_do_not_disturb_end",
         f"button.{P}_reset_filter",
+        f"switch.{P}_keep_mode",
+        f"sensor.{P}_preferred_mode",
+        f"sensor.{P}_last_mode_restoration",
     ]
 )
 

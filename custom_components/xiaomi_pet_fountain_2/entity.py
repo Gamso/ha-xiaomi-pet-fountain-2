@@ -13,6 +13,7 @@ from homeassistant.util import slugify
 
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER, MODEL_NAME
 from .coordinator import FountainCoordinator
+from .mode_keeper import ModeKeeper
 
 # English entity id of every entity, by entity description key: platform and
 # object id after the device name (switch.xiaomi_smart_pet_fountain_2_power).
@@ -37,6 +38,10 @@ OBJECT_IDS: Final[dict[str, tuple[Platform, str]]] = {
     "no_disturb_start": (Platform.TIME, "do_not_disturb_start"),
     "no_disturb_end": (Platform.TIME, "do_not_disturb_end"),
     "reset_filter": (Platform.BUTTON, "reset_filter"),
+    # Mode keeping (see mode_keeper.py)
+    "keep_mode": (Platform.SWITCH, "keep_mode"),
+    "preferred_mode": (Platform.SENSOR, "preferred_mode"),
+    "last_mode_restore": (Platform.SENSOR, "last_mode_restoration"),
 }
 
 
@@ -96,3 +101,22 @@ class FountainEntity(CoordinatorEntity[FountainCoordinator]):
     def available(self) -> bool:
         """Unavailable while the device does not answer or omits the value."""
         return super().available and self._value() is not None
+
+
+class FountainKeeperEntity(FountainEntity):
+    """An entity of the mode keeper: local state, available while loaded."""
+
+    @property
+    def keeper(self) -> ModeKeeper:
+        """The mode keeper of the entry."""
+        return self.coordinator.config_entry.runtime_data.keeper
+
+    @property
+    def available(self) -> bool:
+        """Always available: the state lives in Home Assistant."""
+        return True
+
+    async def async_added_to_hass(self) -> None:
+        """Follow the keeper state."""
+        await super().async_added_to_hass()
+        self.async_on_remove(self.keeper.async_add_listener(self.async_write_ha_state))

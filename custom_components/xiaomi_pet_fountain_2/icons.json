@@ -64,6 +64,17 @@
           "charging": "mdi:battery-charging",
           "charge_full": "mdi:power-plug"
         }
+      },
+      "preferred_mode": {
+        "default": "mdi:water-sync",
+        "state": {
+          "auto": "mdi:motion-sensor",
+          "interval": "mdi:timer-sync-outline",
+          "constant": "mdi:fountain"
+        }
+      },
+      "last_mode_restore": {
+        "default": "mdi:history"
       }
     },
     "switch": {
@@ -83,6 +94,12 @@
         "default": "mdi:bell",
         "state": {
           "on": "mdi:sleep"
+        }
+      },
+      "keep_mode": {
+        "default": "mdi:backup-restore",
+        "state": {
+          "off": "mdi:restore-alert"
         }
       }
     },

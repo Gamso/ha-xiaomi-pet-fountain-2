@@ -41,11 +41,18 @@
       "init": {
         "title": "Options",
         "data": {
-          "scan_interval": "Polling interval"
+          "scan_interval": "Polling interval",
+          "preferred_mode": "Preferred mode",
+          "restore_delay": "Restoration delay",
+          "force_mode": "Force permanently"
         },
         "data_description": {
-          "scan_interval": "Seconds between two reads of the fountain."
-        }
+          "scan_interval": "Seconds between two reads of the fountain.",
+          "preferred_mode": "Mode written back by Keep mode. Choosing a mode with the mode entity also changes it.",
+          "restore_delay": "Seconds to wait before writing the mode back (the fountain needs a moment after power returns).",
+          "force_mode": "Also correct a mode changed from the device button or the Mi Home app, at every poll. Off: such changes are left alone until the next power cut."
+        },
+        "description": "The fountain forgets its mode when it loses mains power. With **Keep mode** on (switch of the device), the integration writes the preferred mode back after a delay: when mains power comes back, when the fountain answers again after being unavailable, and at startup."
       }
     }
   },
@@ -119,6 +126,17 @@
           "charging": "Charging",
           "charge_full": "Fully charged"
         }
+      },
+      "preferred_mode": {
+        "name": "Preferred mode",
+        "state": {
+          "auto": "Auto",
+          "interval": "Interval",
+          "constant": "Constant"
+        }
+      },
+      "last_mode_restore": {
+        "name": "Last mode restoration"
       }
     },
     "switch": {
@@ -130,6 +148,9 @@
       },
       "no_disturb": {
         "name": "Do not disturb"
+      },
+      "keep_mode": {
+        "name": "Keep mode"
       }
     },
     "time": {
@@ -138,6 +159,15 @@
       },
       "no_disturb_end": {
         "name": "Do not disturb end"
+      }
+    }
+  },
+  "selector": {
+    "preferred_mode": {
+      "options": {
+        "auto": "Auto",
+        "interval": "Interval",
+        "constant": "Constant"
       }
     }
   }

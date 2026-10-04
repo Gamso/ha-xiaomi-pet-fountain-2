@@ -41,11 +41,18 @@
       "init": {
         "title": "Options",
         "data": {
-          "scan_interval": "Intervalle d'interrogation"
+          "scan_interval": "Intervalle d'interrogation",
+          "preferred_mode": "Mode préféré",
+          "restore_delay": "Délai de restauration",
+          "force_mode": "Forcer en permanence"
         },
         "data_description": {
-          "scan_interval": "Secondes entre deux lectures de la fontaine."
-        }
+          "scan_interval": "Secondes entre deux lectures de la fontaine.",
+          "preferred_mode": "Mode réécrit par Conserver le mode. Choisir un mode avec l'entité mode le change aussi.",
+          "restore_delay": "Secondes d'attente avant de réécrire le mode (la fontaine a besoin d'un instant au retour du courant).",
+          "force_mode": "Corriger aussi un mode changé depuis le bouton de la fontaine ou l'app Mi Home, à chaque interrogation. Désactivé : ces changements sont respectés jusqu'à la prochaine coupure."
+        },
+        "description": "La fontaine oublie son mode quand elle perd le secteur. Avec **Conserver le mode** activé (interrupteur de l'appareil), l'intégration réécrit le mode préféré après un délai : au retour du secteur, quand la fontaine répond de nouveau après une indisponibilité, et au démarrage."
       }
     }
   },
@@ -119,6 +126,17 @@
           "charging": "En charge",
           "charge_full": "Chargée"
         }
+      },
+      "preferred_mode": {
+        "name": "Mode préféré",
+        "state": {
+          "auto": "Auto (détection)",
+          "interval": "Intermittent",
+          "constant": "Continu"
+        }
+      },
+      "last_mode_restore": {
+        "name": "Dernière restauration du mode"
       }
     },
     "switch": {
@@ -130,6 +148,9 @@
       },
       "no_disturb": {
         "name": "Ne pas déranger"
+      },
+      "keep_mode": {
+        "name": "Conserver le mode"
       }
     },
     "time": {
@@ -138,6 +159,15 @@
       },
       "no_disturb_end": {
         "name": "Fin de ne pas déranger"
+      }
+    }
+  },
+  "selector": {
+    "preferred_mode": {
+      "options": {
+        "auto": "Auto (détection)",
+        "interval": "Intermittent",
+        "constant": "Continu"
       }
     }
   }
