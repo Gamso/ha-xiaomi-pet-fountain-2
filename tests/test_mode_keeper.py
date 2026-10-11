@@ -152,6 +152,91 @@ async def test_reconnected_after_unavailable(
     assert state.attributes["reason"] == "reconnected"
 
 
+async def test_sticky_charging_state_does_not_hide_mains(
+    hass: HomeAssistant, fountain: FakeFountain, freezer: FrozenDateTimeFactory
+) -> None:
+    """Unplugged with a full battery the charging state may stay "charge full":
+    the USB property going back to plugged is enough."""
+    entry = await setup_entry(hass, make_entry())
+
+    fountain.set(9, 6, False)
+    fountain.set(5, 2, 2)
+    fountain.set(2, 4, AUTO)
+    await poll(hass, entry)
+    fountain.set(9, 6, True)
+    await poll(hass, entry)
+    await wait(hass, freezer, 11)
+    assert fountain.mode_writes() == [CONSTANT]
+    state = hass.states.get(f"sensor.{P}_last_mode_restoration")
+    assert state.attributes["reason"] == "power_restored"
+
+
+async def test_late_fallback_after_power_back(
+    hass: HomeAssistant, fountain: FakeFountain, freezer: FrozenDateTimeFactory
+) -> None:
+    """The mode falls back a few polls after mains power returns: restored."""
+    entry = await setup_entry(hass, make_entry())
+
+    fountain.set(9, 6, False)
+    fountain.set(5, 2, 0)
+    await poll(hass, entry)  # still in constant mode on battery
+    power_back(fountain)
+    await poll(hass, entry)
+    await wait(hass, freezer, 60)
+    assert fountain.mode_writes() == []  # nothing to restore yet
+
+    fountain.set(2, 4, AUTO)  # the fountain reboots in auto mode
+    await poll(hass, entry)
+    await wait(hass, freezer, 11)
+    assert fountain.mode_writes() == [CONSTANT]
+    state = hass.states.get(f"sensor.{P}_last_mode_restoration")
+    assert state.attributes["reason"] == "power_restored"
+
+    # The window is closed: a later change on the device is left alone
+    fountain.set(2, 4, INTERVAL)
+    await poll(hass, entry)
+    await wait(hass, freezer, 60)
+    assert fountain.mode_writes() == [CONSTANT]
+
+
+async def test_late_fallback_after_reconnection(
+    hass: HomeAssistant, fountain: FakeFountain, freezer: FrozenDateTimeFactory
+) -> None:
+    """Back online in the right mode, then falling back to auto: restored."""
+    entry = await setup_entry(hass, make_entry())
+
+    fountain.online = False
+    await poll(hass, entry)
+    fountain.online = True
+    await poll(hass, entry)
+    await wait(hass, freezer, 30)
+    fountain.set(2, 4, AUTO)
+    await poll(hass, entry)
+    await wait(hass, freezer, 11)
+    assert fountain.mode_writes() == [CONSTANT]
+    state = hass.states.get(f"sensor.{P}_last_mode_restoration")
+    assert state.attributes["reason"] == "reconnected"
+
+
+async def test_watch_window_expires(
+    hass: HomeAssistant, fountain: FakeFountain, freezer: FrozenDateTimeFactory
+) -> None:
+    """A change long after mains power returned is left alone."""
+    entry = await setup_entry(hass, make_entry())
+
+    fountain.set(9, 6, False)
+    fountain.set(5, 2, 0)
+    await poll(hass, entry)
+    power_back(fountain)
+    await poll(hass, entry)
+    await wait(hass, freezer, 301)
+
+    fountain.set(2, 4, AUTO)
+    await poll(hass, entry)
+    await wait(hass, freezer, 60)
+    assert fountain.mode_writes() == []
+
+
 async def test_startup_restores_stored_mode(
     hass: HomeAssistant,
     fountain: FakeFountain,

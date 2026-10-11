@@ -143,6 +143,11 @@ mode with `select.…_mode` changes it. It is stored with the switch state and
 the last restoration, so all three survive restarts. At the first setup it is
 the mode the fountain is in.
 
+The fountain may fall back to auto mode only a little after it is powered
+again (it reboots). For 5 minutes after mains power returns or after it
+answers again, a mode that changes is restored too; this window closes as soon
+as a restoration ends.
+
 While the fountain runs on battery, the integration waits for mains power
 before writing the mode back. Each restoration reads the mode, writes it and
 reads it back; it makes at most 3 attempts, 20 s then 40 s apart, then gives up

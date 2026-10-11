@@ -25,6 +25,9 @@ CONF_FORCE_MODE: Final = "force_mode"
 RESTORE_MAX_ATTEMPTS: Final = 3
 RESTORE_MIN_BACKOFF: Final = 5  # seconds, base of the retry backoff
 RESTORE_MAX_BACKOFF: Final = 300
+# After a power or reconnection event, a mode that changes during this window
+# is restored too (the fountain may fall back to its default mode late).
+RESTORE_WATCH_WINDOW: Final = 300
 # After a failed forced restoration, wait this long before forcing again.
 FORCE_COOLDOWN: Final = 600
 EVENT_MODE_RESTORE: Final = f"{DOMAIN}_mode_restore"

@@ -9,11 +9,17 @@ mode chosen from Home Assistant) and writes it back, after a delay, when:
 - the integration starts and reads another mode,
 - the preferred mode is changed from the options or the service.
 
+The fountain may only fall back to its default mode a little after the
+event (it reboots once powered again), so the power and reconnection events
+open a watch window:
+a mode that changes during it is restored too. The window closes when it
+expires or when a restoration ends.
+
 A mode changed elsewhere (button on the device, Mi Home app) outside these
-events is left alone, unless the "force" option is on: then any difference
-is corrected. Each restoration makes a
-bounded number of attempts with an exponential backoff, and the outcome of
-the last one is stored, logged and fired on the event bus.
+events and windows is left alone, unless the "force" option is on: then any
+difference is corrected. Each restoration makes a bounded number of attempts
+with an exponential backoff, and the outcome of the last one is stored,
+logged and fired on the event bus.
 """
 
 from __future__ import annotations
@@ -43,6 +49,7 @@ from .const import (
     RESTORE_MAX_ATTEMPTS,
     RESTORE_MAX_BACKOFF,
     RESTORE_MIN_BACKOFF,
+    RESTORE_WATCH_WINDOW,
     VALUE_TO_MODE,
 )
 
@@ -71,19 +78,27 @@ def storage_key(entry_id: str) -> str:
     return f"{DOMAIN}.{entry_id}"
 
 
+def mains_signals(data: dict[str, Any]) -> dict[str, bool]:
+    """What each power property says about mains power (True = on mains).
+
+    9.6 usb-insert-state says whether the power cable is plugged; 5.2
+    charging-state is "no charge" only when running on battery.
+    """
+    signals: dict[str, bool] = {}
+    if (usb := data.get("usb_power")) is not None:
+        signals["usb_power"] = bool(usb)
+    if (charging := data.get("charging_state")) is not None:
+        signals["charging_state"] = charging != CHARGING_NO_CHARGE
+    return signals
+
+
 def on_mains_power(data: dict[str, Any]) -> bool | None:
     """Whether the fountain runs on mains power; None if unknown.
 
-    9.6 usb-insert-state says whether the power cable is plugged; 5.2
-    charging-state is "no charge" only when running on battery. Either
-    signal saying mains power is enough.
+    Either signal saying mains power is enough.
     """
-    signals = []
-    if (usb := data.get("usb_power")) is not None:
-        signals.append(bool(usb))
-    if (charging := data.get("charging_state")) is not None:
-        signals.append(charging != CHARGING_NO_CHARGE)
-    return any(signals) if signals else None
+    signals = mains_signals(data)
+    return any(signals.values()) if signals else None
 
 
 class ModeNotAppliedError(Exception):
@@ -182,6 +197,9 @@ class ModeKeeper:
         self._listeners: list[CALLBACK_TYPE] = []
         self._prev_available: bool | None = None
         self._prev_on_mains: bool | None = None
+        self._prev_signals: dict[str, bool] = {}
+        self._watch_reason: str | None = None
+        self._watch_until: datetime | None = None
         self._episode: _Episode | None = None
         self._cancel_timer: CALLBACK_TYPE | None = None
         self._force_paused_until: datetime | None = None
@@ -297,16 +315,31 @@ class ModeKeeper:
 
         data = self.coordinator.data or {}
         on_mains = on_mains_power(data)
+        signals = mains_signals(data)
         reason: str | None = None
         if self._prev_available is None:
             reason = REASON_STARTUP
         elif self._prev_available is False:
             reason = REASON_RECONNECTED
-        elif self._prev_on_mains is False and on_mains is True:
+        elif any(
+            self._prev_signals.get(name) is False and value for name, value in signals.items()
+        ):
+            # Per signal: one that keeps saying "mains" (charge full while
+            # unplugged) must not hide the other one going back to mains.
             reason = REASON_POWER_RESTORED
         self._prev_available = True
+        self._prev_signals.update(signals)
         if on_mains is not None:
             self._prev_on_mains = on_mains
+        now = dt_util.utcnow()
+        if reason in (REASON_RECONNECTED, REASON_POWER_RESTORED):
+            self._watch_reason = reason
+            self._watch_until = now + timedelta(seconds=RESTORE_WATCH_WINDOW)
+        elif self._watch_until is not None:
+            if now < self._watch_until:
+                reason = self._watch_reason
+            else:
+                self._end_watch()
         if reason is None and self.force:
             reason = REASON_FORCED
         if reason is not None:
@@ -357,6 +390,11 @@ class ModeKeeper:
         self.entry.async_create_background_task(
             self.hass, self._async_attempt(), f"{DOMAIN} mode restoration"
         )
+
+    @callback
+    def _end_watch(self) -> None:
+        self._watch_reason = None
+        self._watch_until = None
 
     @callback
     def async_cancel(self) -> None:
@@ -419,6 +457,7 @@ class ModeKeeper:
         if not episode.written:
             _LOGGER.debug("Mode already %s, nothing to restore", target)
             self._episode = None
+            self._end_watch()
             self._notify()
             return
         _LOGGER.info(
@@ -455,6 +494,7 @@ class ModeKeeper:
         self, episode: _Episode, target: str, result: str, error: str | None = None
     ) -> None:
         self._episode = None
+        self._end_watch()
         self.last_restore = RestoreRecord(
             time=dt_util.utcnow(),
             reason=episode.reason,
@@ -480,6 +520,9 @@ class ModeKeeper:
             "delay": self.delay,
             "restoring": self.restoring,
             "on_mains_power": self._prev_on_mains,
+            "mains_signals": self._prev_signals,
+            "watch_reason": self._watch_reason,
+            "watch_until": self._watch_until.isoformat() if self._watch_until else None,
             "force_paused_until": (
                 self._force_paused_until.isoformat() if self._force_paused_until else None
             ),
