@@ -1,6 +1,6 @@
 # Xiaomi Smart Pet Fountain 2 for Home Assistant
 
-Local integration for the **Xiaomi Smart Pet Fountain 2** (`xiaomi.pet_waterer.iv02`):
+Local integration for the **Xiaomi Smart Pet Fountain 2** (`xiaomi.pet_waterer.iv02` or `xiaomi.pet_waterer.70m2`):
 no Xiaomi cloud, the fountain is read and controlled on your network with the
 miIO/MIoT protocol (UDP 54321), through
 [python-miio](https://github.com/rytilahti/python-miio).

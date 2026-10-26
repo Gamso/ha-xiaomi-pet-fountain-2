@@ -79,7 +79,7 @@ async def test_user_flow_invalid_token(hass: HomeAssistant, fountain: FakeFounta
 
 async def test_user_flow_unsupported_model(hass: HomeAssistant, fountain: FakeFountain) -> None:
     """Another Xiaomi device is refused."""
-    fountain.model = "xiaomi.pet_waterer.70m2"
+    fountain.model = "xiaomi.vacuum.b106eu"
     flow_id = await _start(hass)
     result = await hass.config_entries.flow.async_configure(
         flow_id, {CONF_HOST: HOST, CONF_TOKEN: TOKEN}

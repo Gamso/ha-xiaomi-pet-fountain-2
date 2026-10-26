@@ -54,7 +54,7 @@ async def test_set_preferred_mode_applies(
     assert init_integration.runtime_data.keeper.preferred_mode == "auto"
     freezer.tick(timedelta(seconds=11))
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
     assert fountain.mode_writes() == [0]
 
 

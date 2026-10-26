@@ -9,7 +9,7 @@ DOMAIN: Final = "xiaomi_pet_fountain_2"
 DEFAULT_NAME: Final = "Xiaomi Smart Pet Fountain 2"
 MANUFACTURER: Final = "Xiaomi"
 MODEL_NAME: Final = "Smart Pet Fountain 2"
-SUPPORTED_MODELS: Final = ("xiaomi.pet_waterer.iv02",)
+SUPPORTED_MODELS: Final = ("xiaomi.pet_waterer.iv02", "xiaomi.pet_waterer.70m2")
 
 CONF_SCAN_INTERVAL: Final = "scan_interval"
 DEFAULT_SCAN_INTERVAL: Final = 30  # seconds
