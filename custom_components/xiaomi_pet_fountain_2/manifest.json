@@ -9,5 +9,5 @@
   "issue_tracker": "https://github.com/Gamso/ha-xiaomi-pet-fountain-2/issues",
   "loggers": ["miio"],
   "requirements": ["python-miio>=0.5.12"],
-  "version": "1.0.1"
+  "version": "1.0.2"
 }

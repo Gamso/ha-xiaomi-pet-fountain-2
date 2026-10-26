@@ -1,6 +1,6 @@
 [project]
 name = "ha-xiaomi-pet-fountain-2"
-version = "1.0.1"
+version = "1.0.2"
 description = "Home Assistant custom integration for the Xiaomi Smart Pet Fountain 2 (local MIoT)"
 readme = "README.md"
 license = "MIT"
