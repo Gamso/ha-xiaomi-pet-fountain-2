@@ -65,7 +65,7 @@ async def wait(hass: HomeAssistant, freezer: FrozenDateTimeFactory, seconds: flo
     """Let time pass."""
     freezer.tick(timedelta(seconds=seconds))
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
 
 
 def stored(hass_storage: dict[str, Any], **data: Any) -> None:
